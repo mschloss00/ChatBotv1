@@ -2,17 +2,15 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram import Update
 from gtts import gTTS
 import os
-import asyncio
+import tempfile
 
 # Den Telegram-Bot-Token als Umgebungsvariable abrufen
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
-async def start(update: Update, context: Application):
+async def start(update: Update, context):
     await update.message.reply_text('Willkommen! Du kannst wählen, ob ich in Text oder als Sprachnachricht antworte.')
 
-import tempfile
-
-async def text_response(update: Update, context: Application):
+async def text_response(update: Update, context):
     user_message = update.message.text
     response_text = f'Du hast gesagt: {user_message}'
 
@@ -25,29 +23,22 @@ async def text_response(update: Update, context: Application):
     else:
         await update.message.reply_text(response_text)
 
-async def toggle_voice_mode(update: Update, context: Application):
+async def toggle_voice_mode(update: Update, context):
     current_mode = context.user_data.get('voice_mode', False)
     context.user_data['voice_mode'] = not current_mode
     mode = 'Sprachnachrichten' if context.user_data['voice_mode'] else 'Textnachrichten'
     await update.message.reply_text(f'Antwortmodus geändert zu: {mode}')
 
-async def main():
+def main():
     app = Application.builder().token(TELEGRAM_TOKEN).build()
 
+    # Handler für Befehle und Nachrichten hinzufügen
     app.add_handler(CommandHandler('start', start))
     app.add_handler(CommandHandler('voice_mode', toggle_voice_mode))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_response))
 
-    await app.run_polling()
+    # Telegram Bot Polling starten, ohne auf das Event-Loop-Management explizit zuzugreifen
+    app.run_polling()
 
 if __name__ == '__main__':
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        # Kein laufender Event-Loop gefunden, einen neuen erstellen
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(main())
-    else:
-        # Event-Loop läuft bereits, daher main() als Task hinzufügen
-        loop.create_task(main())
+    main()
