@@ -43,10 +43,14 @@ if __name__ == '__main__':
     import asyncio
 
     try:
+        # Prüfen, ob bereits ein Event-Loop läuft
+        loop = asyncio.get_running_loop()
+    except RuntimeError:  # Kein Event-Loop aktiv
+        loop = None
+
+    if loop and loop.is_running():
+        # Falls der Event-Loop läuft, verwende ihn
+        loop.create_task(main())  # Verwende create_task, um die main-Funktion auszuführen
+    else:
+        # Wenn kein Event-Loop aktiv ist, starte einen neuen
         asyncio.run(main())
-    except RuntimeError as e:
-        if "This event loop is already running" in str(e):
-            loop = asyncio.get_running_loop()
-            loop.run_until_complete(main())
-        else:
-            raise
