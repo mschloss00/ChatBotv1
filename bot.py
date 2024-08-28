@@ -37,7 +37,6 @@ async def main():
     app.add_handler(CommandHandler('voice_mode', toggle_voice_mode))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_response))
 
-    # Entferne den Parameter shutdown_on_close
     await app.run_polling()
 
 if __name__ == '__main__':
@@ -49,6 +48,7 @@ if __name__ == '__main__':
     except RuntimeError:  # Kein Event-Loop aktiv
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-
-    # Main-Funktion in laufendem Event-Loop ausführen
-    loop.run_until_complete(main())
+        loop.run_until_complete(main())
+    else:
+        # Falls der Event-Loop bereits läuft, starte die main() Funktion in diesem Loop
+        loop.create_task(main())
