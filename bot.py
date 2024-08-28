@@ -44,15 +44,8 @@ async def main():
     # Webhook einrichten
     await app.bot.set_webhook(WEBHOOK_URL)
 
-    # Starten des Webhook-Servers
-    await app.start_webhook(
-        listen="0.0.0.0",
-        port=int(os.environ.get('PORT', 5000)),
-        url_path="/webhook"
-    )
-
-    # App laufen lassen
-    await app.updater.start_polling()
+    # Starten des Webhook-Servers mit Flask auf Render
+    await app.start()
 
 if __name__ == '__main__':
     try:
