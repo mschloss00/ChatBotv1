@@ -2,6 +2,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram import Update
 from gtts import gTTS
 import os
+import asyncio
 
 # Den Telegram-Bot-Token als Umgebungsvariable abrufen
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -40,15 +41,13 @@ async def main():
     await app.run_polling()
 
 if __name__ == '__main__':
-    import asyncio
-
     try:
-        # Prüfen, ob bereits ein Event-Loop läuft
         loop = asyncio.get_running_loop()
-    except RuntimeError:  # Kein Event-Loop aktiv
+    except RuntimeError:
+        # Kein laufender Event-Loop gefunden, einen neuen erstellen
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         loop.run_until_complete(main())
     else:
-        # Falls der Event-Loop bereits läuft, starte die main() Funktion in diesem Loop
+        # Event-Loop läuft bereits, daher main() als Task hinzufügen
         loop.create_task(main())
