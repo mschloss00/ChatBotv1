@@ -33,4 +33,29 @@ telegram_app.add_handler(CommandHandler("start", start))
 def webhook():
     if request.method == "POST":
         # Process the incoming Telegram update
-        update = Update
+        update = Update.de_json(request.get_json(force=True), telegram_app.bot)
+        asyncio.run(telegram_app.process_update(update))
+        return "OK", 200
+
+async def main():
+    # Set the webhook for Telegram
+    await telegram_app.bot.set_webhook(WEBHOOK_URL)
+    
+    # Start the Telegram bot application
+    await telegram_app.start()
+    logger.info("Telegram bot started")
+    
+    # Keep the bot running
+    await telegram_app.updater.start_polling()
+
+if __name__ == '__main__':
+    # Start the Flask app on the port Render provides
+    port = int(os.environ.get("PORT", 5000))
+    
+    # Start Flask in a separate thread
+    import threading
+    flask_thread = threading.Thread(target=lambda: flask_app.run(host="0.0.0.0", port=port))
+    flask_thread.start()
+
+    # Run the Telegram bot in the main thread
+    asyncio.run(main())
