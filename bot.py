@@ -17,26 +17,25 @@ WEBHOOK_URL = "https://chatbotv1-ocy6.onrender.com/webhook"
 async def start(update: Update, context):
     await update.message.reply_text('Hello! I am your bot.')
 
-def main():
-    # Create the Application object
+async def main():
+    # Create the Application object and initialize it
     app = Application.builder().token(TOKEN).build()
 
     # Set up command handlers
     app.add_handler(CommandHandler("start", start))
 
-    # Start the webhook
-    async def run_webhook():
-        # Set the webhook once and check if it's needed to reset again
-        await app.bot.set_webhook(WEBHOOK_URL)
+    # Set the webhook
+    await app.bot.set_webhook(WEBHOOK_URL)
 
-        # Start receiving updates via webhook
-        await app.start()
+    # Initialize the application
+    await app.initialize()
 
-        # Run the application until interrupted
-        await app.updater.start_polling()
+    # Start the application webhook
+    await app.start()
 
-    # Run the async function
-    asyncio.run(run_webhook())
+    # Keep the bot running
+    await app.updater.start_polling()
 
 if __name__ == '__main__':
-    main()
+    # Run the asynchronous main function
+    asyncio.run(main())
