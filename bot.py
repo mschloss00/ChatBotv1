@@ -3,7 +3,7 @@ import logging
 import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler
-from flask import Flask
+from flask import Flask, request
 
 # Set up Flask app
 flask_app = Flask(__name__)
@@ -18,42 +18,19 @@ logger = logging.getLogger(__name__)
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 WEBHOOK_URL = "https://chatbotv1-ocy6.onrender.com/webhook"
 
+# Initialize the Telegram bot application
+telegram_app = Application.builder().token(TOKEN).build()
+
+# Telegram command handler
 async def start(update: Update, context):
     await update.message.reply_text('Hello! I am your bot.')
 
-async def main():
-    # Create the Application object and initialize it
-    app = Application.builder().token(TOKEN).build()
+# Add the command handler to the Telegram bot application
+telegram_app.add_handler(CommandHandler("start", start))
 
-    # Set up command handlers
-    app.add_handler(CommandHandler("start", start))
-
-    # Set the webhook
-    await app.bot.set_webhook(WEBHOOK_URL)
-
-    # Initialize the application
-    await app.initialize()
-
-    # Start the webhook service
-    logger.info("Application started")
-
-    # Keep the application running
-    await app.start()
-
-    # Sleep forever to keep the process alive
-    await asyncio.Event().wait()
-
-@flask_app.route('/')
-def index():
-    return "Bot is running!"
-
-if __name__ == '__main__':
-    # Start the Flask app on the port Render provides
-    port = int(os.environ.get("PORT", 5000))
-    import threading
-    flask_thread = threading.Thread(target=lambda: flask_app.run(host="0.0.0.0", port=port))
-    flask_thread.start()
-
-    # Run the asynchronous main function for the Telegram bot
-    asyncio.run(main())
-
+# Route for Telegram Webhook
+@flask_app.route('/webhook', methods=['POST'])
+def webhook():
+    if request.method == "POST":
+        # Process the incoming Telegram update
+        update = Update
