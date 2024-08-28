@@ -37,7 +37,8 @@ async def main():
     app.add_handler(CommandHandler('voice_mode', toggle_voice_mode))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_response))
 
-    await app.run_polling()
+    # Setze shutdown_on_close=False, um das Schließen des Event-Loops zu verhindern
+    await app.run_polling(shutdown_on_close=False)
 
 if __name__ == '__main__':
     import asyncio
