@@ -25,11 +25,17 @@ async def main():
     # Füge einen Handler für /start hinzu
     app.add_handler(CommandHandler("start", start))
 
+    # Initialisiere die Application
+    await app.initialize()
+
     # Setze den Webhook für den Bot
     await app.bot.set_webhook(WEBHOOK_URL)
 
     # Starte den Bot
     await app.start()
+
+    # Halte den Bot am Laufen
+    await app.updater.start_polling()
 
 if __name__ == "__main__":
     import asyncio
