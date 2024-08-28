@@ -11,7 +11,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Telegram token and webhook URL from environment variables
-TOKEN = os.getenv("TOKEN")
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 WEBHOOK_URL = "https://chatbotv1-ocy6.onrender.com/webhook"
 
 async def start(update: Update, context):
