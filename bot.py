@@ -3,7 +3,7 @@ from telegram import Update
 from gtts import gTTS
 import os
 
-TELEGRAM_TOKEN = '7508808182:AAEl7yS5Me425PumMYYDzRi1KoFu3dsgVLM'
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 async def start(update: Update, context: Application):
     await update.message.reply_text('Willkommen! Du kannst wählen, ob ich in Text oder als Sprachnachricht antworte.')
@@ -37,4 +37,9 @@ async def main():
 
 if __name__ == '__main__':
     import asyncio
-    asyncio.run(main())
+
+    if not asyncio.get_event_loop().is_running():
+        asyncio.run(main())
+    else:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
