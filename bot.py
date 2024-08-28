@@ -48,10 +48,12 @@ def index():
     return "Bot is running!"
 
 if __name__ == '__main__':
-    # Start the Flask app in a separate thread to ensure Render detects the open port
+    # Start the Flask app on the port Render provides
+    port = int(os.environ.get("PORT", 5000))
     import threading
-    flask_thread = threading.Thread(target=lambda: flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000))))
+    flask_thread = threading.Thread(target=lambda: flask_app.run(host="0.0.0.0", port=port))
     flask_thread.start()
 
     # Run the asynchronous main function for the Telegram bot
     asyncio.run(main())
+
