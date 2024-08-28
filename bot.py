@@ -22,8 +22,10 @@ async def main():
     # Erstelle die Application und setze den Bot-Token
     app = Application.builder().token(BOT_TOKEN).build()
 
-    # Füge einen Handler für /start hinzu
-    app.add_handler(CommandHandler("start", start))
+ # Prüfe, ob der Webhook bereits gesetzt ist
+    webhook_info = await app.bot.get_webhook_info()
+    if webhook_info.url != WEBHOOK_URL:
+        await app.bot.set_webhook(WEBHOOK_URL)
 
     # Initialisiere die Application
     await app.initialize()
