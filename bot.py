@@ -1,44 +1,42 @@
-import logging
 import os
+import logging
+import asyncio
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler
 
-# Konfiguration des Loggings
+# Set up logging
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
-# Dein Bot Token und Webhook URL
-BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
+# Telegram token and webhook URL from environment variables
+TOKEN = os.getenv("TOKEN")
 WEBHOOK_URL = "https://chatbotv1-ocy6.onrender.com/webhook"
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Sendet eine Nachricht, wenn der Befehl /start gesendet wird."""
-    await update.message.reply_text("Hallo! Ich bin dein Bot.")
+async def start(update: Update, context):
+    await update.message.reply_text('Hello! I am your bot.')
 
-async def main():
-    """Startet den Bot."""
-    # Erstelle die Application und setze den Bot-Token
-    app = Application.builder().token(BOT_TOKEN).build()
+def main():
+    # Create the Application object
+    app = Application.builder().token(TOKEN).build()
 
- # Prüfe, ob der Webhook bereits gesetzt ist
-    webhook_info = await app.bot.get_webhook_info()
-    if webhook_info.url != WEBHOOK_URL:
+    # Set up command handlers
+    app.add_handler(CommandHandler("start", start))
+
+    # Start the webhook
+    async def run_webhook():
+        # Set the webhook once and check if it's needed to reset again
         await app.bot.set_webhook(WEBHOOK_URL)
 
-    # Initialisiere die Application
-    await app.initialize()
+        # Start receiving updates via webhook
+        await app.start()
 
-    # Setze den Webhook für den Bot
-    await app.bot.set_webhook(WEBHOOK_URL)
+        # Run the application until interrupted
+        await app.updater.start_polling()
 
-    # Starte den Bot
-    await app.start()
+    # Run the async function
+    asyncio.run(run_webhook())
 
-    # Halte den Bot am Laufen
-    await app.updater.start_polling()
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+if __name__ == '__main__':
+    main()
