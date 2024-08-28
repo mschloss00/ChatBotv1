@@ -1,6 +1,4 @@
-from telegram import Update, Bot
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-from gtts import gTTS
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 import os
 
 # Füge deinen neuen Token hier ein
