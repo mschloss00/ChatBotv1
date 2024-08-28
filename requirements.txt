@@ -1,2 +1,2 @@
-python-telegram-bot
-gtts
+python-telegram-bot==21.4
+gtts==2.5.3
