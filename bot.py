@@ -3,6 +3,7 @@ from telegram import Update
 from gtts import gTTS
 import os
 
+# Den Telegram-Bot-Token als Umgebungsvariable abrufen
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 async def start(update: Update, context: Application):
@@ -22,7 +23,6 @@ async def text_response(update: Update, context: Application):
         os.remove(tmp_file.name)
     else:
         await update.message.reply_text(response_text)
-
 
 async def toggle_voice_mode(update: Update, context: Application):
     current_mode = context.user_data.get('voice_mode', False)
@@ -46,11 +46,8 @@ if __name__ == '__main__':
         # Prüfen, ob bereits ein Event-Loop läuft
         loop = asyncio.get_running_loop()
     except RuntimeError:  # Kein Event-Loop aktiv
-        loop = None
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
-    if loop and loop.is_running():
-        # Falls der Event-Loop läuft, main() als Aufgabe hinzufügen und laufen lassen
-        loop.run_until_complete(main())
-    else:
-        # Wenn kein Event-Loop aktiv ist, starte einen neuen
-        asyncio.run(main())
+    # Main-Funktion in laufendem Event-Loop ausführen
+    loop.run_until_complete(main())
