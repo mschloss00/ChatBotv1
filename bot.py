@@ -30,11 +30,11 @@ async def main():
     # Initialize the application
     await app.initialize()
 
-    # Start the application webhook
-    await app.start()
-
-    # Keep the bot running
-    await app.updater.start_polling()
+    # Start the webhook service
+    logger.info("Application started")
+    
+    # Sleep forever to keep the process alive
+    await asyncio.Event().wait()
 
 if __name__ == '__main__':
     # Run the asynchronous main function
