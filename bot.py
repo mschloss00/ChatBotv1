@@ -49,8 +49,8 @@ if __name__ == '__main__':
         loop = None
 
     if loop and loop.is_running():
-        # Falls der Event-Loop läuft, verwende ihn
-        loop.create_task(main())  # Verwende create_task, um die main-Funktion auszuführen
+        # Falls der Event-Loop läuft, main() als Aufgabe hinzufügen und laufen lassen
+        loop.run_until_complete(main())
     else:
         # Wenn kein Event-Loop aktiv ist, starte einen neuen
         asyncio.run(main())
