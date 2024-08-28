@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 from gtts import gTTS
 import os
+import asyncio
 
 # Füge deinen neuen Token hier ein
 TELEGRAM_TOKEN = '7508808182:AAEl7yS5Me425PumMYYDzRi1KoFu3dsgVLM'
@@ -28,7 +29,7 @@ async def text_response(update: Update, context: CallbackContext):
 async def toggle_voice_mode(update: Update, context: CallbackContext):
     current_mode = context.user_data.get('voice_mode', False)
     context.user_data['voice_mode'] = not current_mode
-    mode = 'Sprachnachrichten' if context.user_data['voice_mode'] else 'Textnachrichten'
+    mode = 'Sprachnachrichten' wenn context.user_data['voice_mode'] sonst 'Textnachrichten'
     await update.message.reply_text(f'Antwortmodus geändert zu: {mode}')
 
 async def main():
@@ -42,10 +43,8 @@ async def main():
     # Textnachrichten
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_response))
 
-    # Startet den Bot
-    await app.start_polling()
-    await app.idle()
+    # Startet den Bot und führt das Polling durch
+    await app.run_polling()  # Verwende run_polling() statt start_polling()
 
 if __name__ == '__main__':
-    import asyncio
     asyncio.run(main())
