@@ -4,7 +4,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 import openai
 
 # OpenAI API-Key
-openai.api_key = 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
+openai.api_key = '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'
 
 # Logging-Konfiguration
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
